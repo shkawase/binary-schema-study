@@ -242,12 +242,18 @@ int main(int argc, char* argv[]) {
 
   DynamicRecord rec(schema);
 
+  constexpr uint8_t VERSION{1};
+  constexpr uint64_t MAGIC{0x123456789abcdeull};
+  constexpr uint32_t LENGTH{0x1357};
+  constexpr uint16_t HEADER_LENGTH{0x48};
+  constexpr uint16_t TYPE{0xab};
+
   // operator[] を使ってフィールドに値を設定
-  rec["version"] = 1;                  // 8bit
-  rec["magic"] = 0x123456789abcdeull;  // 56bit
-  rec["length"] = 0x1357;              // 32bit
-  rec["header_length"] = 0x48;         // 16bit
-  rec["type"] = 0xab;                  // 16bit
+  rec["version"] = VERSION;              // 8bit
+  rec["magic"] = MAGIC;                  // 56bit
+  rec["length"] = LENGTH;                // 32bit
+  rec["header_length"] = HEADER_LENGTH;  // 16bit
+  rec["type"] = TYPE;                    // 16bit
 
   // バイナリをファイルに書き出し
   std::ofstream ofs("header.bin", std::ios::binary);
@@ -278,11 +284,11 @@ int main(int argc, char* argv[]) {
   std::cout << "Type:          0x" << rec2["type"] << "\n";
   std::cout << std::dec;
 
-  assert(rec2["version"] == rec["version"]);
-  assert(rec2["magic"] == rec["magic"]);
-  assert(rec2["length"] == rec["length"]);
-  assert(rec2["header_length"] == rec["header_length"]);
-  assert(rec2["type"] == rec["type"]);
+  assert(rec2["version"] == VERSION);
+  assert(rec2["magic"] == MAGIC);
+  assert(rec2["length"] == LENGTH);
+  assert(rec2["header_length"] == HEADER_LENGTH);
+  assert(rec2["type"] == TYPE);
   std::cout << "All values match!\n";
 
   return 0;
