@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -213,6 +214,13 @@ class DynamicRecord {
   }
   // --- 7) バッファをストリームに書き出すメソッド ---
   void write(std::ostream& os) const { os.write(buf.data(), buf.size()); }
+  void dump(std::ostream& os) const {
+    for (auto& byte : buf) {
+      os << std::hex << std::setw(2) << std::setfill('0') << (int)(uint8_t)byte
+         << ' ';
+    }
+    os << std::dec;
+  }
 };
 
 // --- 使用例 ---
@@ -241,18 +249,41 @@ int main(int argc, char* argv[]) {
   rec["header_length"] = 0x48;         // 16bit
   rec["type"] = 0xab;                  // 16bit
 
-  // バイナリを標準出力へ書き出し
-  rec.write(std::cout);
-  std::cout << "\n";
+  // バイナリをファイルに書き出し
+  std::ofstream ofs("header.bin", std::ios::binary);
+  if (!ofs) {
+    std::cerr << "Error: could not open header.bin for writing\n";
+    return 1;
+  }
+  rec.write(ofs);
+  ofs.close();
+  std::cout << "Header was encoded and written to header.bin\n";
+
+  DynamicRecord rec2(schema);
+  std::ifstream ifs2("header.bin", std::ios::binary);
+  if (!ifs2) {
+    std::cerr << "Error: could not open header.bin for reading\n";
+    return 1;
+  }
+  rec2.read(ifs2);
+  ifs2.close();
+  std::cout << "Header was read and decoded from header.bin\n";
 
   // operator[] を使ってフィールドから値を取得
   std::cout << std::hex;
-  std::cout << "Version:       0x" << rec["version"] << "\n";
-  std::cout << "Magic:         0x" << rec["magic"] << "\n";
-  std::cout << "Length:        0x" << rec["length"] << "\n";
-  std::cout << "Header Length: 0x" << rec["header_length"] << "\n";
-  std::cout << "Type:          0x" << rec["type"] << "\n";
+  std::cout << "Version:       0x" << rec2["version"] << "\n";
+  std::cout << "Magic:         0x" << rec2["magic"] << "\n";
+  std::cout << "Length:        0x" << rec2["length"] << "\n";
+  std::cout << "Header Length: 0x" << rec2["header_length"] << "\n";
+  std::cout << "Type:          0x" << rec2["type"] << "\n";
   std::cout << std::dec;
+
+  assert(rec2["version"] == rec["version"]);
+  assert(rec2["magic"] == rec["magic"]);
+  assert(rec2["length"] == rec["length"]);
+  assert(rec2["header_length"] == rec["header_length"]);
+  assert(rec2["type"] == rec["type"]);
+  std::cout << "All values match!\n";
 
   return 0;
 }
