@@ -1,0 +1,27 @@
+[
+  {
+    "name": "version",
+    "description": "Version",
+    "bitLength": 8
+  },
+  {
+    "name": "magic",
+    "description": "Magic number",
+    "bitLength": 56
+  },
+  {
+    "name": "length",
+    "description": "Length in bytes",
+    "bitLength": 32
+  },
+  {
+    "name": "header_length",
+    "description": "Header length in bytes",
+    "bitLength": 16
+  },
+  {
+    "name": "type",
+    "description": "Type",
+    "bitLength": 16
+  }
+]

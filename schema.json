@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Binary Schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Field name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Field description"
+      },
+      "bitLength": {
+        "type": "integer",
+        "description": "Length in bits",
+        "minimum": 1,
+        "maximum": 64
+      }
+    },
+    "required": ["name", "bitLength"],
+    "additionalProperties": false
+  },
+  "required": ["items"],
+  "additionalProperties": false
+}
